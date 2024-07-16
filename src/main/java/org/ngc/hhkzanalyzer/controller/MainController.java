@@ -40,7 +40,7 @@ public class MainController {
 
             if (entity != null) {
                 String html = new String(entity.getContent().readAllBytes());
-                String technologyCounts = analyzeService.parseHtml(html);
+                Map<String, Integer> technologyCounts = analyzeService.parseHtml(html);
                 model.addAttribute("technologyCounts", technologyCounts);
                 return "technologies";
 

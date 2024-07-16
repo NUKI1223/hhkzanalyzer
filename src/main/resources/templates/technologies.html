@@ -12,11 +12,13 @@
         <thead>
         <tr>
             <th>Технология</th>
+            <th>Количество упоминаний</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td th:text="${technologyCounts}"></td>
+        <tr th:each="entry : ${technologyCounts}">
+            <td th:text="${entry.key}"></td>
+            <td th:text="${entry.value}"></td>
         </tr>
         </tbody>
     </table>

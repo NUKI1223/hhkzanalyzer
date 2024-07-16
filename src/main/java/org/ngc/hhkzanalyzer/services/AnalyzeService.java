@@ -58,7 +58,7 @@ public class AnalyzeService {
             "ActiveMQ", "Zookeeper", "Logstash", "Kibana", "Consul", "Vault",
             "Istio", "Linkerd"
     );
-    public String parseHtml(String html) throws IOException {
+    public Map<String, Integer> parseHtml(String html) throws IOException {
         List<Vakancy> posts = new ArrayList<Vakancy>();
         Document document = Jsoup.parse(html);
 
@@ -80,10 +80,11 @@ public class AnalyzeService {
 
         }
         Map<String, Integer> technologyCounts = countTechnologyOccurrences(allTechnologies);
-        StringBuilder result = new StringBuilder();
-        technologyCounts.forEach((tech, count) -> result.append(tech).append(": ").append(count).append("\n"));
-        String resultString = result.toString();
-        return resultString;
+//        StringBuilder result = new StringBuilder();
+//        technologyCounts.forEach((tech, count) -> result.append(tech).append(": ").append(count).append("\n"));
+//        String resultString = result.toString();
+//        return resultString;
+        return technologyCounts;
 
     }
     public static Map<String, Integer> countTechnologyOccurrences(List<String> technologies) {
@@ -91,6 +92,7 @@ public class AnalyzeService {
         for (String tech : technologies) {
             technologyCounts.put(tech, technologyCounts.getOrDefault(tech, 0) + 1);
         }
+        technologyCounts.entrySet().removeIf(entry -> entry.getValue() == 1);
         return technologyCounts;
     }
     public static List<String> extractTechnologies(String text) {
