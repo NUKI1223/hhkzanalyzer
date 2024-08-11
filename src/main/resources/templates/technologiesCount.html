@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список технологий</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Список технологий</h1>
+    <table class="table table-striped mt-3">
+        <thead>
+        <tr>
+            <th>Технология</th>
+            <th>Количество упоминаний</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="entry : ${technologyCounts}">
+            <td th:text="${entry.key}"></td>
+            <td th:text="${entry.value}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

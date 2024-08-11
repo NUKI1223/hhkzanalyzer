@@ -11,43 +11,48 @@ import org.ngc.hhkzanalyzer.services.AnalyzeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @Controller
 public class MainController {
     private final AnalyzeService analyzeService;
+    private static final List<String> LANGUAGES = Arrays.asList("-", "Java", "Python", "JavaScript", "C#", "C++", "Ruby", "PHP", "Swift", "Kotlin", "Go", "Rust", "Scala", "R");
+    private static final List<String> POSITIONS = Arrays.asList("-", "Backend", "Frontend", "FullStack", "DevOps", "DataScientist", "QA", "ProjectManager", "ProductOwner");
+
 
     public MainController(AnalyzeService analyzeService) {
         this.analyzeService = analyzeService;
     }
 
     @GetMapping("/tech")
-    public String Main(Model model) {
-        String url = "https://hh.kz/search/vacancy?text=Python&from=suggest_post&salary=&ored_clusters=true&area=159&hhtmFrom=vacancy_search_list&hhtmFromLabel=vacancy_search_line";
+    public String tech(Model model) {
+        model.addAttribute("languages", LANGUAGES);
+        model.addAttribute("positions", POSITIONS);
+        return "technologies";
+    }
 
-        try {
-            HttpClient httpClient = HttpClients.custom()
-                    .setDefaultRequestConfig(RequestConfig.custom()
-                            .setCookieSpec(CookieSpecs.STANDARD)
-                            .build())
-                    .build();
-            HttpGet request = new HttpGet(url);
-            HttpResponse response = httpClient.execute(request);
-            HttpEntity entity = response.getEntity();
+    @GetMapping("/techCount")
+    public String techCount(Model model, @RequestParam("language") String language, @RequestParam("position") String position) {
 
-            if (entity != null) {
-                String html = new String(entity.getContent().readAllBytes());
-                Map<String, Integer> technologyCounts = analyzeService.parseHtml(html);
-                model.addAttribute("technologyCounts", technologyCounts);
-                return "technologies";
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        String url = "";
+        if (language=="-") {
+            url = "https://hh.kz/search/vacancy?text="+ position+ "&from=suggest_post&salary=&ored_clusters=true&area=159&hhtmFrom=vacancy_search_list&hhtmFromLabel=vacancy_search_line";
+        } else if (position=="-") {
+            url = "https://hh.kz/search/vacancy?text="+ language+ "&from=suggest_post&salary=&ored_clusters=true&area=159&hhtmFrom=vacancy_search_list&hhtmFromLabel=vacancy_search_line";
         }
-        return "No";
+        else {
+            url = "https://hh.kz/search/vacancy?text="+ language+"+"+position+"&from=suggest_post&salary=&ored_clusters=true&area=159&hhtmFrom=vacancy_search_list&hhtmFromLabel=vacancy_search_line";
+
+        }
+        Map<String, Integer> technologyCounts = analyzeService.parseHtml(url);
+        model.addAttribute("technologyCounts", technologyCounts);
+        return "technologiesCount";
     }
 }

@@ -5,9 +5,18 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.ngc.hhkzanalyzer.model.Vakancy;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -58,35 +67,46 @@ public class AnalyzeService {
             "ActiveMQ", "Zookeeper", "Logstash", "Kibana", "Consul", "Vault",
             "Istio", "Linkerd"
     );
-    public Map<String, Integer> parseHtml(String html) throws IOException {
-        List<Vakancy> posts = new ArrayList<Vakancy>();
-        Document document = Jsoup.parse(html);
+    public Map<String, Integer> parseHtml(String url) {
+        System.setProperty("webdriver.chrome.driver", "D:\\Lightshot\\java\\hhkzanalyzer\\selenium\\chromedriver.exe");
 
-        Elements name = document.getElementsByAttributeValue("class", "serp-item__title-link-wrapper");
-        for (Element element : name) {
-            String detailsLink = element.child(0).attr("href");
-            Vakancy vakancy = new Vakancy();
-            Document postDetails = Jsoup.connect(detailsLink).get();
-            vakancy.setAllText(postDetails.getElementsByClass("g-user-content").first().text());
-            vakancy.setVakancyName(element.getElementsByAttributeValue("data-qa", "serp-item__title").text());
-            posts.add(vakancy);
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless"); // Запуск в headless-режиме (без графического интерфейса)
+
+        WebDriver driver = new ChromeDriver(options);
+
+        try {
+            List<Vakancy> posts = new ArrayList<Vakancy>();
+            driver.get(url);
+            Document document = Jsoup.parse(driver.getPageSource());
+            Elements name = document.getElementsByAttributeValue("class", "serp-item__title-link-wrapper");
+            for (Element element : name) {
+                String detailsLink = element.child(0).attr("href");
+                Vakancy vakancy = new Vakancy();
+                Document postDetails = Jsoup.connect(detailsLink).get();
+                vakancy.setAllText(postDetails.getElementsByClass("g-user-content").text());
+                vakancy.setVakancyName(element.getElementsByAttributeValue("data-qa", "serp-item__title").text());
+                posts.add(vakancy);
+            }
+
+
+            List<String> allTechnologies = new ArrayList<>();
+            for (Vakancy vakancy : posts) {
+                String description = vakancy.getAllText();
+                List<String> foundTechnologies = extractTechnologies(description);
+                allTechnologies.addAll(foundTechnologies);
+            }
+
+            return countTechnologyOccurrences(allTechnologies);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            driver.quit();
         }
-        List<String> allTechnologies = new ArrayList<>();
 
-        for (Vakancy vakancy : posts){
-            String description = vakancy.getAllText();
-            List<String> foundTechnologies = extractTechnologies(description);
-            allTechnologies.addAll(foundTechnologies);
-
-        }
-        Map<String, Integer> technologyCounts = countTechnologyOccurrences(allTechnologies);
-//        StringBuilder result = new StringBuilder();
-//        technologyCounts.forEach((tech, count) -> result.append(tech).append(": ").append(count).append("\n"));
-//        String resultString = result.toString();
-//        return resultString;
-        return technologyCounts;
-
+        return Collections.emptyMap();
     }
+
     public static Map<String, Integer> countTechnologyOccurrences(List<String> technologies) {
         Map<String, Integer> technologyCounts = new HashMap<>();
         for (String tech : technologies) {
@@ -95,6 +115,7 @@ public class AnalyzeService {
         technologyCounts.entrySet().removeIf(entry -> entry.getValue() == 1);
         return technologyCounts;
     }
+
     public static List<String> extractTechnologies(String text) {
         String lowerCaseText = text.toLowerCase();
 

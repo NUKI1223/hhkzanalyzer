@@ -2,26 +2,27 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Список технологий</title>
+    <title>Выбор языка программирования и должности</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 <div class="container">
-    <h1 class="mt-5">Список технологий</h1>
-    <table class="table table-striped mt-3">
-        <thead>
-        <tr>
-            <th>Технология</th>
-            <th>Количество упоминаний</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="entry : ${technologyCounts}">
-            <td th:text="${entry.key}"></td>
-            <td th:text="${entry.value}"></td>
-        </tr>
-        </tbody>
-    </table>
+    <h1 class="mt-5">Выбор языка программирования и должности</h1>
+    <form method="get" action="/techCount">
+        <div class="form-group">
+            <label for="language">Язык программирования</label>
+            <select class="form-control" id="language" name="language">
+                <option th:each="language : ${languages}" th:value="${language}" th:text="${language}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="position">Должность</label>
+            <select class="form-control" id="position" name="position">
+                <option th:each="position : ${positions}" th:value="${position}" th:text="${position}"></option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Поиск</button>
+    </form>
 </div>
 </body>
 </html>
