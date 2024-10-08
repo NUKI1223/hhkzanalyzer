@@ -17,7 +17,7 @@ import java.util.List;
 @Table(name = "Users")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(unique = true)
     private String username;
@@ -26,9 +26,11 @@ public class User implements UserDetails {
 
     private boolean enabled;
 
+    @Column(name = "verification_code")
     private String verificationCode;
 
-    private LocalDateTime createdAt;
+    @Column(name = "verification_expiration")
+    private LocalDateTime verificationCodeExpiryDate;
 
     @Column(unique = true)
     private String email;

@@ -10,6 +10,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +21,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    @Value("${security.jwt.secret-key}")
+    @Value("${jwt.private-key}")
     private String secretKey;
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
@@ -75,8 +79,16 @@ public class JwtService {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+
+        try {
+            byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+            KeyFactory keyFactory = KeyFactory.getInstance("EC");
+            return keyFactory.generatePrivate(spec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 }
