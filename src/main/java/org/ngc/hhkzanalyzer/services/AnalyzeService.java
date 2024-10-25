@@ -78,8 +78,10 @@ public class AnalyzeService {
         try {
             List<Vakancy> posts = new ArrayList<Vakancy>();
             driver.get(url);
+            System.out.println(driver.getTitle());
+            System.out.println(driver.getPageSource());
             Document document = Jsoup.parse(driver.getPageSource());
-            Elements name = document.getElementsByAttributeValue("class", "serp-item__title-link-wrapper");
+            Elements name = document.getElementsByAttributeValue("class", "custom-color-magritte-link--TGWm0usZjBiWA6x0tvhy vacancy-name-wrapper--tzZ1sS33pe6ELop6_Cte");
             for (Element element : name) {
                 String detailsLink = element.child(0).attr("href");
                 Vakancy vakancy = new Vakancy();
@@ -113,6 +115,7 @@ public class AnalyzeService {
             technologyCounts.put(tech, technologyCounts.getOrDefault(tech, 0) + 1);
         }
         technologyCounts.entrySet().removeIf(entry -> entry.getValue() == 1);
+
         return technologyCounts;
     }
 

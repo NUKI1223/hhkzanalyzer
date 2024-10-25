@@ -14,12 +14,12 @@
             <h2 class="text-center">Вход</h2>
             <form th:action="@{/login}" method="post">
                 <div class="mb-3">
-                    <label for="loginEmail" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="loginEmail" name="email" required>
+                    <label for="username" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="username" name="username" required>
                 </div>
                 <div class="mb-3">
-                    <label for="loginPassword" class="form-label">Пароль</label>
-                    <input type="password" class="form-control" id="loginPassword" name="password" required>
+                    <label for="password" class="form-label">Пароль</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Войти</button>
                 <a th:href="@{/forgot-password}" class="d-block text-center mt-2">Забыли пароль?</a>
