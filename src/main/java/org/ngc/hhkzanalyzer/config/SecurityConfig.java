@@ -43,7 +43,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())// Отключаем CSRF (можно включить для веб-приложений)
                 .securityContext(context -> context.requireExplicitSave(false))
-                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/","/verify", "/signup", "/WEB-INF/**", "/login").permitAll()
+                .authorizeHttpRequests(authorize -> authorize.requestMatchers("/","/verify", "/signup", "/WEB-INF/**", "/login", "/feed").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(form -> form.loginPage("/login").permitAll().defaultSuccessUrl("/", true))
                 .logout(logout -> logout.logoutUrl("/logout").permitAll());

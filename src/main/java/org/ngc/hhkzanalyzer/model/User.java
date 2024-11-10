@@ -26,6 +26,8 @@ public class User implements UserDetails {
 
     private boolean enabled;
 
+    private String avatarImage;
+
     @Column(name = "verification_code")
     private String verificationCode;
 
@@ -34,6 +36,9 @@ public class User implements UserDetails {
 
     @Column(unique = true)
     private String email;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Post> posts;
 
     //TODO: сделать userdetails для дополнительной информации, а так же для загрузки аватарок
     public User(String username, String password, String email) {

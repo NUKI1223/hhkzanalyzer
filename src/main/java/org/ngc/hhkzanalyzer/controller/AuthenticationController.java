@@ -19,6 +19,7 @@ public class AuthenticationController {
 
 
     private final AuthenticationService authenticationService;
+    private static final Logger LOG = LoggerFactory.getLogger(AuthenticationController.class);
 
     public AuthenticationController(final AuthenticationService authenticationService) {
 
@@ -32,31 +33,33 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@RequestBody RegisterUserDTO registerUserDTO) {
+    public String register(@ModelAttribute RegisterUserDTO registerUserDTO) {
+        LOG.info("RegisterUserDTO: {}", registerUserDTO);
         User user = authenticationService.signUp(registerUserDTO);
-        return ResponseEntity.ok(user);
+        return "redirect:/signin";
     }
-    private static final Logger LOG = LoggerFactory.getLogger(AuthenticationController.class);
+
 
     @GetMapping(value = "/login")
     public String login() {
-        LOG.info("/login");
-
-        LOG.info("Return login");
-
-        //return login.html located in /resources/templates
         return "login";
+    }
+
+    @GetMapping("/verify")
+    public String showVerificationPage(Model model) {
+        model.addAttribute("verifyUser", new VerifyUserDTO());
+        return "verify";
     }
 
 
     @PostMapping("/verify")
-    public ResponseEntity<?> verify(@RequestBody VerifyUserDTO verifyUserDTO) {
+    public String verify(@ModelAttribute VerifyUserDTO verifyUserDTO) {
         try {
             authenticationService.verifyUser(verifyUserDTO);
-            return ResponseEntity.ok("Account verified successfully");
+            return "redirect:/signin";
         }
         catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return "redirect:/verify";
         }
     }
 

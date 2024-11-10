@@ -20,10 +20,10 @@
                     <a class="nav-link" th:href="@{/login}">Вход</a>
                 </li>
                 <li class="nav-item" sec:authorize="!isAuthenticated()">
-                    <a class="nav-link" th:href="@{/register}">Регистрация</a>
+                    <a class="nav-link" th:href="@{/signup}">Регистрация</a>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a href="users/me">Profile</a>
+                    <a href="/user">Profile</a>
                 </li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
                     <form th:action="@{/logout}" method="post">
@@ -44,15 +44,6 @@
         <div class="col-md-4">
             <div class="card text-center">
                 <div class="card-body">
-                    <h5 class="card-title">Учебные курсы</h5>
-                    <p class="card-text">Получите доступ к лучшим курсам и материалам.</p>
-                    <a th:href="@{/courses}" class="btn btn-primary">Перейти к курсам</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card text-center">
-                <div class="card-body">
                     <h5 class="card-title">Анализ вакансий</h5>
                     <p class="card-text">Изучите актуальные вакансии и необходимые технологии.</p>
                     <a th:href="@{/tech}" class="btn btn-primary">Анализировать вакансии</a>
@@ -62,9 +53,9 @@
         <div class="col-md-4">
             <div class="card text-center">
                 <div class="card-body">
-                    <h5 class="card-title">Сообщество</h5>
-                    <p class="card-text">Присоединяйтесь к сообществу программистов.</p>
-                    <a th:href="@{/community}" class="btn btn-primary">Присоединиться</a>
+                    <h5 class="card-title">Список постов</h5>
+                    <p class="card-text">Изучите посты пользователей и прокомментируйте их.</p>
+                    <a th:href="@{/feed}" class="btn btn-primary">Присоединиться</a>
                 </div>
             </div>
         </div>
@@ -74,7 +65,7 @@
         <div class="row">
             <div class="col-md-8">
                 <div th:each="article : ${news}" class="card mb-3">
-                    <img th:if="${article.image}" th:src="${article.image}" class="card-img-top" alt="News Image">
+                    <img th:if="${article.getImage()}" th:src="${article.getImage()}" class="card-img-top" alt="News Image">
                     <div class="card-body">
                         <h5 class="card-title" th:text="${article.title}">News Title</h5>
                         <p class="card-text" th:text="${article.description}">Description of the news...</p>
